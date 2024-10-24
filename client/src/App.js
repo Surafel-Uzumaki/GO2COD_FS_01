@@ -1,69 +1,23 @@
-import React, { useEffect, useState } from "react";
-import "./App.css"; // Import your CSS file
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import ViewPosts from "./components/ViewPosts";
+import CreatePost from "./components/CreatePost";
+import PostDetail from "./components/PostDetail";
+import EditPost from "./components/EditPost";
 
-function App() {
-  const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    const response = await fetch("http://localhost:5000/api/posts");
-    const data = await response.json();
-    setPosts(data);
-  };
-
-  const addPost = async () => {
-    if (!title || !content) return;
-    const response = await fetch("http://localhost:5000/api/posts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, content }),
-    });
-    const newPost = await response.json();
-    setPosts([...posts, newPost]);
-    setTitle("");
-    setContent("");
-  };
-
-  const deletePost = async (id) => {
-    await fetch(`http://localhost:5000/api/posts/${id}`, {
-      method: "DELETE",
-    });
-    setPosts(posts.filter((post) => post._id !== id));
-  };
-
+const App = () => {
   return (
-    <div>
-      <h1>Blog Posts</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Post Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <textarea
-          placeholder="Post Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <button onClick={addPost}>Add Post</button>
-      </div>
-      {posts.map((post) => (
-        <div key={post._id}>
-          <h2>{post.title}</h2>
-          <p>{post.content}</p>
-          <button onClick={() => deletePost(post._id)}>Delete Post</button>
-        </div>
-      ))}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/blogs" element={<ViewPosts />} />
+        <Route path="/posts/:id" element={<PostDetail />} />
+        <Route path="/create" element={<CreatePost />} />
+        <Route path="/edit/:id" element={<EditPost />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

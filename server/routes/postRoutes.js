@@ -1,8 +1,7 @@
 const express = require("express");
-const Post = require("../models/Post"); // Ensure this file exists
+const Post = require("../models/Post");
 const router = express.Router();
 
-// Get all posts
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.find();
@@ -12,7 +11,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Create a new post
 router.post("/", async (req, res) => {
   const post = new Post({
     title: req.body.title,
@@ -27,7 +25,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Delete a post
 router.delete("/:id", async (req, res) => {
   try {
     const deletedPost = await Post.findByIdAndDelete(req.params.id);
