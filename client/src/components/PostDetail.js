@@ -1,60 +1,77 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 
-const PostDetail = () => {
-  const { id } = useParams();
+function PostDetail() {
+  const { id } = useParams(); // Get the ID from the URL parameters
   const [post, setPost] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/posts/${id}`);
-        const data = await response.json();
-        setPost(data);
+        const response = await axios.get(
+          `http://localhost:5000/api/posts/${id}`
+        );
+        setPost(response.data);
       } catch (error) {
-        console.error("Error fetching post:", error);
+        setError("Post not found");
       }
     };
+
     fetchPost();
-  }, [id]);
+  }, [id]); // Dependency array includes id
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-5 text-red-600">Error: {error}</div>
+    );
+  }
 
   if (!post) {
-    return <p className="text-center">Loading post details...</p>;
+    return <div className="container mx-auto p-5">Loading...</div>;
   }
 
   return (
     <div className="container mx-auto p-5">
-      <h1 className="text-4xl font-bold mb-4 text-center">{post.title}</h1>
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        {/* Title Section */}
+        <h2 className="text-3xl font-bold text-center mb-3 p-4 border-b">
+          {post.title}
+        </h2>
 
-      {/* Display the image if it exists */}
-      {post.imagePath && (
-        <div className="flex justify-center mb-4">
-          <img
-            src={`http://localhost:5000/${post.imagePath}`} // Ensure this path is correct
-            alt={post.title}
-            className="max-w-full h-auto rounded-lg shadow-lg"
-          />
+        {/* Image Section */}
+        {post.imagePath && (
+          <div className="relative">
+            <img
+              src={`http://localhost:5000/uploads/${post.imagePath}`}
+              alt={post.title}
+              className="w-full h-64 object-cover mb-4 lg:h-96 lg:w-[600px] mx-auto" // Fixed size for larger screens
+            />
+          </div>
+        )}
+
+        {/* Content Section */}
+        <div className="p-4 border-t border-gray-300 bg-gray-50">
+          <p className="text-gray-700 text-lg">{post.content}</p>
         </div>
-      )}
 
-      <div className="text-gray-800 text-lg leading-relaxed mb-5">
-        {post.content}
+        {/* Navigation Buttons */}
       </div>
-
-      <div className="flex justify-between mt-6">
-        <Link to="/blogs">
+      <div className="flex justify-between p-4">
+        <Link to="/">
           <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-            Back to Blogs
+            Back to Home
           </button>
         </Link>
-        <Link to="/">
-          <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
-            Back to Home
+        <Link to="/blogs">
+          <button className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">
+            Back to Blogs
           </button>
         </Link>
       </div>
     </div>
   );
-};
+}
 
 export default PostDetail;

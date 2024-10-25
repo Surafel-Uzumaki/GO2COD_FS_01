@@ -1,16 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null); // State to hold the image
-  const [successMessage, setSuccessMessage] = useState(""); // State for success message
-  const navigate = useNavigate();
-
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]); // Set the uploaded file
-  };
+  const [image, setImage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +12,7 @@ const CreatePost = () => {
     formData.append("title", title);
     formData.append("content", content);
     if (image) {
-      formData.append("image", image); // Append the image file
+      formData.append("image", image);
     }
 
     try {
@@ -31,18 +25,10 @@ const CreatePost = () => {
         throw new Error("Error creating post");
       }
 
-      // Reset form fields
       setTitle("");
       setContent("");
       setImage(null);
-
-      // Set success message
-      setSuccessMessage("Post created successfully!");
-
-      // Redirect after a delay (optional)
-      setTimeout(() => {
-        navigate("/blogs"); // Redirect after success
-      }, 2000);
+      alert("Post created successfully!");
     } catch (error) {
       console.error("Error creating post:", error);
     }
@@ -50,52 +36,47 @@ const CreatePost = () => {
 
   return (
     <div className="container mx-auto p-5">
-      <h1 className="text-3xl font-bold mb-5 text-center">Create Post</h1>
+      <h1 className="text-4xl font-bold mb-5 text-center text-gray-800">
+        Create a New Post
+      </h1>
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-4 rounded-lg shadow-md"
+        className="bg-white shadow-md rounded-lg p-6 space-y-4"
       >
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <textarea
-            placeholder="Content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          ></textarea>
-        </div>
-        <div className="mb-4">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="border border-gray-300 rounded p-2"
-          />
-        </div>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          required
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Content"
+          required
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        ></textarea>
+        <input
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300"
         >
           Create Post
         </button>
       </form>
-
-      {/* Success Message */}
-      {successMessage && (
-        <div className="mt-4 p-2 bg-green-100 text-green-800 border border-green-400 rounded">
-          {successMessage}
-        </div>
-      )}
+      <div className="mt-4 text-center">
+        <Link to="/blogs">
+          <button className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-700 transition duration-300">
+            View All Posts
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };

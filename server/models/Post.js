@@ -1,3 +1,4 @@
+// server/models/Post.js
 const mongoose = require("mongoose");
 
 const PostSchema = new mongoose.Schema(
@@ -12,7 +13,6 @@ const PostSchema = new mongoose.Schema(
     },
     imagePath: {
       type: String,
-      required: true,
     },
   },
   { timestamps: true }
